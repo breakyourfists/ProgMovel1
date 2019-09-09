@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">FernandoApp</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Senha</string>
+    <string name="action_sign_in">Login Ou Cadastrar</string>
+    <string name="action_sign_in_short">Entrar</string>
+    <string name="welcome">"Bem vindo"</string>
+    <string name="invalid_username">Usuário inválido</string>
+    <string name="invalid_password">Senha deve possuir mais de 5 caracteres.</string>
+    <string name="login_failed">"Falha no login"</string>
+    <string name="avatar_desc">Foto de Perfil</string>
+    <string name="SexOpt1">Feminino</string>
+    <string name="SexOpt2">Masculino</string>
+    <string name="SexOpt3">Não Binário</string>
+    <string name="AlterAvatarButton">Alterar</string>
+    <string name="NullField">Este campo não pode ser vázio</string>
+    <string name="cadastrarButton">Cadastrar</string>
+
+</resources>
