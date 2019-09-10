@@ -14,7 +14,7 @@ public class BancoUsuario extends SQLiteOpenHelper {
     public static final String TURMA = "turma";
     public static final String SENHA = "senha";
     private static final String NOME_BANCO = "FernandoApp.db";
-    private static final int VERSAO = 3;
+    private static final int VERSAO = 5;
 
     public BancoUsuario(Context context) {
         super(context, NOME_BANCO, null, VERSAO);
@@ -26,11 +26,11 @@ public class BancoUsuario extends SQLiteOpenHelper {
         String sql = "CREATE TABLE " + TABELA + "("
                 + ID + " integer primary key autoincrement,"
                 + NOME + " text, "
-                + EMAIL + " text, "
+                + EMAIL + " text  NOT NULL UNIQUE, "
                 + TELEFONE + " text, "
                 + DISCIPLINA + " text,"
                 + TURMA + " integer,"
-                + SENHA + " text"
+                + SENHA + " text "
                 + ")";
         db.execSQL(sql);
     }

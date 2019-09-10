@@ -31,13 +31,13 @@ public class UsuarioDAO {
         valores.put(BancoUsuario.DISCIPLINA, disciplina);
         valores.put(BancoUsuario.ID, id);
 
-        long resultado = db.insert(BancoUsuario.TABELA, null, valores);
+        long resultado = db.insertOrThrow(BancoUsuario.TABELA, null, valores);
         db.close();
 
         if (resultado == -1) {
             return null;
         } else {
-            return new Usuario(id, nome, email, senha, disciplina, telefone, turma);
+            return new Usuario((int) resultado, nome, email, senha, disciplina, telefone, turma);
         }
     }
 

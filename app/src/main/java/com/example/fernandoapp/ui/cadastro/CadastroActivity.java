@@ -2,6 +2,7 @@ package com.example.fernandoapp.ui.cadastro;
 
 import android.Manifest;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +20,6 @@ import androidx.core.content.FileProvider;
 
 import com.example.fernandoapp.R;
 import com.example.fernandoapp.data.dao.UsuarioDAO;
-import com.example.fernandoapp.data.model.Usuario;
 import com.example.fernandoapp.ui.login.LoginActivity;
 
 import java.io.ByteArrayOutputStream;
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class CadastroActivity extends AppCompatActivity {
-    private CadastroViewModel cadastroViewModel;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView imageView;
     String currentPhotoPath;
@@ -121,17 +120,6 @@ public class CadastroActivity extends AppCompatActivity {
         }
     }
 
-   /* @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            imageView.setImageBitmap(imageBitmap);
-
-            File storageDir = criarArquivoFoto();
-        }
-    }*/
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -186,15 +174,30 @@ public class CadastroActivity extends AppCompatActivity {
         String telefoneStr = telefoneCampoEditText.getText().toString();
         int turmaInt = Integer.parseInt(turmaCampoEditText.getText().toString());
         UsuarioDAO usuarioDAO = new UsuarioDAO(getApplicationContext());
-        Usuario usuario = usuarioDAO.inserirUsuario(nomeStr, emailStr, telefoneStr, turmaInt, senhaStr, disciplinaStr);
-        if (usuario != null) {
+        try {
+            usuarioDAO.inserirUsuario(nomeStr, emailStr, telefoneStr, turmaInt, senhaStr, disciplinaStr);
             Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show();
-            Log.i("usuario", "Email: " + emailStr + " Senha: " + senhaStr);
-        } else
-            Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário.", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, LoginActivity.class);
-        intent.putExtra("usuario",usuario);
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        } catch (SQLiteConstraintException e) {
+            String msg = e.getMessage();
+            if (e.getMessage().contains("UNIQUE") && e.getMessage().contains("usuarios.email"))
+                msg = "Email já cadastrado.";
+            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            Log.i("usuario", "Email: " + emailStr + " Senha: " + senhaStr + " Erro: " + e.getMessage());
+            e.printStackTrace();
+            reload();
+        }
 
+    }
+
+    public void reload() {
+        Intent intent = getIntent();
+        overridePendingTransition(0, 0);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        finish();
+
+        overridePendingTransition(0, 0);
         startActivity(intent);
     }
 
