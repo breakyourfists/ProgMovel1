@@ -1,15 +1,7 @@
 package com.example.fernandoapp.ui.cadastro;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.FileProvider;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,24 +9,24 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
+
 import com.example.fernandoapp.R;
+import com.example.fernandoapp.data.dao.UsuarioDAO;
 import com.example.fernandoapp.data.model.Usuario;
 import com.example.fernandoapp.ui.login.LoginActivity;
-import com.example.fernandoapp.ui.principal.MainActivity;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class CadastroActivity extends AppCompatActivity {
     private CadastroViewModel cadastroViewModel;
@@ -108,8 +100,7 @@ public class CadastroActivity extends AppCompatActivity {
         Intent fotoCapturada = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         try {
             if (fotoCapturada.resolveActivity(getPackageManager()) != null) {
-                File arquivoFoto = null;
-                arquivoFoto = criarArquivoFoto();
+                File arquivoFoto = criarArquivoFoto();
 
                 if (arquivoFoto != null) {
 
@@ -152,19 +143,19 @@ public class CadastroActivity extends AppCompatActivity {
             //3
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             thumbnail.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-            //4
-            File file = new File(Environment.getExternalStorageDirectory()+File.separator + "image.jpg");
+            String filename = campoEmailEditText.getText().toString().substring(0, 3) + "_avatar.jpg";
+            File dir = new File(Environment.getExternalStorageDirectory() + File.separator + "fernandoApp");
+            dir.mkdirs();
+            File file = new File(dir + File.separator + filename);
+
             try {
-                file.createNewFile();
-                FileOutputStream fo = new FileOutputStream(file);
-                //5
-                fo.write(bytes.toByteArray());
-                fo.close();
+                FileOutputStream out = new FileOutputStream(file);
+                thumbnail.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+                // PNG is a lossless format, the compression factor (100) is ignored
             } catch (IOException e) {
-                Log.i("erro","xxx"+e.toString());
-                Log.i("erro","xxx"+e.getLocalizedMessage());
-                Log.i("erro","xxx"+e.getMessage());
+                e.printStackTrace();
             }
+
         }
     }
 
@@ -180,7 +171,6 @@ public class CadastroActivity extends AppCompatActivity {
             );
 
         currentPhotoPath = image.getAbsolutePath();
-        image.getCanonicalPath();
         } catch (IOException e) {
             Log.i("erro",e.getMessage());
         }
@@ -189,38 +179,19 @@ public class CadastroActivity extends AppCompatActivity {
 
     void enviarCadastro(ArrayList<EditText> campos){
 
-        Usuario usuario = new Usuario();
-
-        for (EditText campo: campos) {
-            switch (campo.getId()){
-                case R.id.campoNome:{
-                    usuario.setNome(campo.getText().toString());
-                    break;
-                }
-                case R.id.campoEmail:{
-                    usuario.setEmail(campo.getText().toString());
-                    break;
-                }
-                case R.id.campoSenha:{
-                    usuario.setSenha(campo.getText().toString());
-                    break;
-                }
-                case R.id.disciplinaCampo:{
-                    usuario.setDisciplina(campo.getText().toString());
-                    break;
-                }
-                case R.id.telefoneCampo:{
-                    usuario.setTelefone(campo.getText().toString());
-                    break;
-                }
-                case R.id.turmaCampo:{
-                    usuario.setTurma(campo.getText().toString());
-                }
-            }
-        }
-
-        Toast.makeText(this, "Por favor, faça o login.", Toast.LENGTH_SHORT).show();
-
+        String nomeStr = campoNomeEditText.getText().toString();
+        String emailStr = campoEmailEditText.getText().toString();
+        String senhaStr = campoSenhaEditText.getText().toString();
+        String disciplinaStr = disciplinaCampoEditText.getText().toString();
+        String telefoneStr = telefoneCampoEditText.getText().toString();
+        int turmaInt = Integer.parseInt(turmaCampoEditText.getText().toString());
+        UsuarioDAO usuarioDAO = new UsuarioDAO(getApplicationContext());
+        Usuario usuario = usuarioDAO.inserirUsuario(nomeStr, emailStr, telefoneStr, turmaInt, senhaStr, disciplinaStr);
+        if (usuario != null) {
+            Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show();
+            Log.i("usuario", "Email: " + emailStr + " Senha: " + senhaStr);
+        } else
+            Toast.makeText(getApplicationContext(), "Erro ao cadastrar usuário.", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra("usuario",usuario);
 

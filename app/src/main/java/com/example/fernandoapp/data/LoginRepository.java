@@ -1,6 +1,8 @@
 package com.example.fernandoapp.data;
 
-import com.example.fernandoapp.data.model.LoggedInUser;
+import android.content.Context;
+
+import com.example.fernandoapp.data.model.Usuario;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -14,7 +16,8 @@ public class LoginRepository {
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
+    private Usuario user = null;
+    private Context context;
 
     // private constructor : singleton access
     private LoginRepository(LoginDataSource dataSource) {
@@ -41,18 +44,27 @@ public class LoginRepository {
         dataSource.logout();
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
+    private void setLoggedInUser(Usuario usuario) {
         this.user = user;
         // If user credentials will be cached in local storage, it is recommended it be encrypted
         // @see https://developer.android.com/training/articles/keystore
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<Usuario> login(String username, String password) {
         // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
+        Result<Usuario> result = dataSource.login(username, password);
         if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+            setLoggedInUser(((Result.Success<Usuario>) result).getData());
         }
         return result;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
+        dataSource.setContext(context);
     }
 }

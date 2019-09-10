@@ -1,15 +1,15 @@
 package com.example.fernandoapp.ui.login;
 
+import android.content.Context;
+import android.util.Patterns;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import android.util.Patterns;
-
+import com.example.fernandoapp.R;
 import com.example.fernandoapp.data.LoginRepository;
 import com.example.fernandoapp.data.Result;
-import com.example.fernandoapp.data.model.LoggedInUser;
-import com.example.fernandoapp.R;
 import com.example.fernandoapp.data.model.Usuario;
 
 public class LoginViewModel extends ViewModel {
@@ -17,6 +17,7 @@ public class LoginViewModel extends ViewModel {
     private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
     private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
     private LoginRepository loginRepository;
+    private Context context;
 
     LoginViewModel(LoginRepository loginRepository) {
         this.loginRepository = loginRepository;
@@ -32,11 +33,11 @@ public class LoginViewModel extends ViewModel {
 
     public void login(String username, String password) {
         // can be launched in a separate asynchronous job
-        Result<LoggedInUser> result = loginRepository.login(username, password);
+        Result<Usuario> result = loginRepository.login(username, password);
 
         if (result instanceof Result.Success) {
-            LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-            loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+            Usuario usuario = ((Result.Success<Usuario>) result).getData();
+            loginResult.setValue(new LoginResult(new LoggedInUserView(usuario)));
         } else {
             loginResult.setValue(new LoginResult(R.string.login_failed));
         }
@@ -69,7 +70,9 @@ public class LoginViewModel extends ViewModel {
         return password != null && password.trim().length() > 5;
     }
 
-    public void addUsuario(Usuario usuario){
-        loginRepository.getDataSource().getUsuarios().put(usuario.getEmail(),usuario);
+
+    public void setContext(Context context) {
+        this.context = context;
+        loginRepository.setContext(context);
     }
 }

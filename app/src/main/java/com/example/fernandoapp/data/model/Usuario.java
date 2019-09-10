@@ -5,7 +5,17 @@ import android.os.Parcelable;
 
 public class Usuario  implements Parcelable {
     String nome,email,telefone,disciplina, senha;
-    int turma;
+    int turma, id;
+
+    public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.disciplina = disciplina;
+        this.telefone = telefone;
+        this.turma = turma;
+    }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
@@ -42,8 +52,6 @@ public class Usuario  implements Parcelable {
         senha = in.readString();
     }
 
-    public Usuario(){
-    };
 
     public String getNome() {
         return nome;

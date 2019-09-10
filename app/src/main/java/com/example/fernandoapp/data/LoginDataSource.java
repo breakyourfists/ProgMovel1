@@ -1,29 +1,26 @@
 package com.example.fernandoapp.data;
 
-import com.example.fernandoapp.data.model.LoggedInUser;
+import android.content.Context;
+
+import com.example.fernandoapp.data.dao.UsuarioDAO;
 import com.example.fernandoapp.data.model.Usuario;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
 public class LoginDataSource {
-    private static HashMap<String,Usuario> usuarios = new HashMap<String,Usuario>();
+    private Context context;
 
-    public Result<LoggedInUser> login(String username, String password) {
+    public Result<Usuario> login(String username, String password) {
 
         try {
             // TODO: handle loggedInUser authentication
-            Usuario usuario = usuarios.get(username);
-            if(usuario!=null && usuario.getSenha().equals(password)) {
-                LoggedInUser fakeUser =
-                        new LoggedInUser(
-                                java.util.UUID.randomUUID().toString(),
-                                usuario.getNome());
-                return new Result.Success<>(fakeUser);
+            UsuarioDAO usuarioDAO = new UsuarioDAO(context);
+            Usuario usuario = usuarioDAO.getUsuario(username, password);
+            if (usuario != null) {
+                return new Result.Success<>(usuario);
             }else{
                 return new Result.Error(new IOException("Usuário inválido."));
             }
@@ -31,14 +28,13 @@ public class LoginDataSource {
             return new Result.Error(new IOException("Error logging in", e));
         }
 
-
-    }
-
-    public static HashMap<String, Usuario> getUsuarios() {
-        return usuarios;
     }
 
     public void logout() {
         // TODO: revoke authentication
+    }
+
+    public void setContext(Context context) {
+        this.context = context;
     }
 }
