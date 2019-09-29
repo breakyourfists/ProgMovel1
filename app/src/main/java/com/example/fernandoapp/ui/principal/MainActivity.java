@@ -11,17 +11,26 @@ import com.example.fernandoapp.R;
 import com.example.fernandoapp.data.model.Usuario;
 import com.example.fernandoapp.ui.login.LoginActivity;
 import com.example.fernandoapp.ui.mapa.MapsActivity;
+import com.google.android.libraries.places.api.Places;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent i = getIntent();
         Usuario usuario = i.getParcelableExtra("usuario");
 
         Toast.makeText(this, "Bem vindo "+usuario.getNome(), Toast.LENGTH_SHORT).show();
+
+        String apiKey = getString(R.string.google_maps_key);
+
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), apiKey);
+        }
+
 
 
     }
@@ -30,4 +39,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
+
+    private void setLaunchActivityClickListener(
+            int onClickResId, Class<? extends AppCompatActivity> activityClassToLaunch) {
+        findViewById(onClickResId)
+                .setOnClickListener(
+                        v -> startActivity(new Intent(MainActivity.this, activityClassToLaunch)));
+    }
+
+
 }
