@@ -16,5 +16,7 @@
     <string name="AlterAvatarButton">Alterar</string>
     <string name="NullField">Este campo não pode ser vázio</string>
     <string name="cadastrarButton">Cadastrar</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="abrirMapaButtonText">Abrir Mapa</string>
 
 </resources>
