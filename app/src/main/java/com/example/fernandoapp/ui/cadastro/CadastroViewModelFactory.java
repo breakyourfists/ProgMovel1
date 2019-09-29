@@ -3,7 +3,6 @@ package com.example.fernandoapp.ui.cadastro;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import com.example.fernandoapp.ui.login.LoginViewModel;
 
 public class CadastroViewModelFactory implements ViewModelProvider.Factory {
     @NonNull

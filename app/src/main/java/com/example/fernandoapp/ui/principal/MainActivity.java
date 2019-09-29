@@ -1,15 +1,14 @@
 package com.example.fernandoapp.ui.principal;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.fernandoapp.R;
 import com.example.fernandoapp.data.model.Usuario;
-import com.example.fernandoapp.ui.login.LoginActivity;
 import com.example.fernandoapp.ui.mapa.MapsActivity;
 import com.google.android.libraries.places.api.Places;
 
@@ -23,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         Intent i = getIntent();
         Usuario usuario = i.getParcelableExtra("usuario");
 
-        Toast.makeText(this, "Bem vindo "+usuario.getNome(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Bem vindo " + usuario.getNome(), Toast.LENGTH_SHORT).show();
 
         String apiKey = getString(R.string.google_maps_key);
 
@@ -32,10 +31,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
     }
 
-    public void abrirMapaButton(View view){
+    public void abrirMapaButton(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }

@@ -3,8 +3,17 @@ package com.example.fernandoapp.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Usuario  implements Parcelable {
-    String nome,email,telefone,disciplina, senha;
+public class Usuario implements Parcelable {
+    public static final Parcelable.Creator<Usuario> CREATOR = new Parcelable.Creator<Usuario>() {
+        public Usuario createFromParcel(Parcel in) {
+            return new Usuario(in);
+        }
+
+        public Usuario[] newArray(int size) {
+            return new Usuario[size];
+        }
+    };
+    String nome, email, telefone, disciplina, senha;
     int turma, id;
 
     public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma) {
@@ -17,6 +26,15 @@ public class Usuario  implements Parcelable {
         this.turma = turma;
     }
 
+    private Usuario(Parcel in) {
+        turma = in.readInt();
+        nome = in.readString();
+        email = in.readString();
+        telefone = in.readString();
+        disciplina = in.readString();
+        senha = in.readString();
+    }
+
     @Override
     public void writeToParcel(Parcel out, int flags) {
         out.writeInt(turma);
@@ -27,31 +45,10 @@ public class Usuario  implements Parcelable {
         out.writeString(senha);
     }
 
-    public static final Parcelable.Creator<Usuario> CREATOR = new Parcelable.Creator<Usuario>() {
-        public Usuario createFromParcel(Parcel in) {
-            return new Usuario(in);
-        }
-
-        public Usuario[] newArray(int size) {
-            return new Usuario[size];
-        }
-    };
-
-
     @Override
     public int describeContents() {
         return 0;
     }
-
-    private Usuario(Parcel in) {
-        turma = in.readInt();
-        nome = in.readString();
-        email = in.readString();
-        telefone = in.readString();
-        disciplina= in.readString();
-        senha = in.readString();
-    }
-
 
     public String getNome() {
         return nome;

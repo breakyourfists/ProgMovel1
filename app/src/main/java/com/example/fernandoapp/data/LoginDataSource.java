@@ -21,7 +21,7 @@ public class LoginDataSource {
             Usuario usuario = usuarioDAO.getUsuario(username, password);
             if (usuario != null) {
                 return new Result.Success<>(usuario);
-            }else{
+            } else {
                 return new Result.Error(new IOException("Usuário inválido."));
             }
         } catch (Exception e) {

@@ -24,15 +24,15 @@ public class LoginRepository {
         this.dataSource = dataSource;
     }
 
-    public LoginDataSource getDataSource() {
-        return dataSource;
-    }
-
     public static LoginRepository getInstance(LoginDataSource dataSource) {
         if (instance == null) {
             instance = new LoginRepository(dataSource);
         }
         return instance;
+    }
+
+    public LoginDataSource getDataSource() {
+        return dataSource;
     }
 
     public boolean isLoggedIn() {

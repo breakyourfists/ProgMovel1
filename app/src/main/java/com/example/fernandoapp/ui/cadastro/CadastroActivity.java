@@ -39,6 +39,7 @@ public class CadastroActivity extends AppCompatActivity {
     EditText telefoneCampoEditText;
     EditText turmaCampoEditText;
     ArrayList<EditText> campos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,25 +62,25 @@ public class CadastroActivity extends AppCompatActivity {
         campos.add(telefoneCampoEditText);
         campos.add(turmaCampoEditText);
 
-        if(extras !=null) {
+        if (extras != null) {
             String email = extras.getString("email");
             campoEmailEditText.setText(email);
         }
     }
 
-    public void editarAvatarButton(View view){
+    public void editarAvatarButton(View view) {
         enviarCapturaDeFoto();
     }
 
-    public void cadastrarButton(View view){
-        if(isCamposValidos(campos)){
+    public void cadastrarButton(View view) {
+        if (isCamposValidos(campos)) {
             enviarCadastro(campos);
         }
     }
 
-    boolean isCamposValidos(ArrayList<EditText> campos){
-        for (EditText campo: campos) {
-                String valor = campo.getText().toString();
+    boolean isCamposValidos(ArrayList<EditText> campos) {
+        for (EditText campo : campos) {
+            String valor = campo.getText().toString();
             if (valor.matches("")) {
                 Toast.makeText(this, "Preencha todos os campos.", Toast.LENGTH_SHORT).show();
                 return false;
@@ -112,11 +113,11 @@ public class CadastroActivity extends AppCompatActivity {
                     imageView.setImageURI(photoURI);
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            Log.i("erro","xxx"+e.toString());
-            Log.i("erro","xxx"+e.getLocalizedMessage());
-            Log.i("erro","xxx"+e.getMessage());
+            Log.i("erro", "xxx" + e.toString());
+            Log.i("erro", "xxx" + e.getLocalizedMessage());
+            Log.i("erro", "xxx" + e.getMessage());
         }
     }
 
@@ -158,14 +159,14 @@ public class CadastroActivity extends AppCompatActivity {
                     storageDir      /* directory */
             );
 
-        currentPhotoPath = image.getAbsolutePath();
+            currentPhotoPath = image.getAbsolutePath();
         } catch (IOException e) {
-            Log.i("erro",e.getMessage());
+            Log.i("erro", e.getMessage());
         }
         return image;
     }
 
-    void enviarCadastro(ArrayList<EditText> campos){
+    void enviarCadastro(ArrayList<EditText> campos) {
 
         String nomeStr = campoNomeEditText.getText().toString();
         String emailStr = campoEmailEditText.getText().toString();

@@ -25,8 +25,8 @@ public class CadastroViewModel extends ViewModel {
         }
     }
 
-    private boolean isCampoValido(String valor){
-        return valor!=null;
+    private boolean isCampoValido(String valor) {
+        return valor != null;
     }
 
     LiveData<CadastroFormState> getCadastroFormState() {

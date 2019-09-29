@@ -18,5 +18,7 @@
     <string name="cadastrarButton">Cadastrar</string>
     <string name="title_activity_maps">Map</string>
     <string name="abrirMapaButtonText">Abrir Mapa</string>
+    <string name="mapaButton1">Marcar Posição Atual</string>
+    <string name="mapaButton2">Salvar Casa</string>
 
 </resources>

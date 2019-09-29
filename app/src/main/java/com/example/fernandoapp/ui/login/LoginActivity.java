@@ -28,8 +28,9 @@ import com.example.fernandoapp.ui.principal.MainActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private LoginViewModel loginViewModel;
     Usuario usuario;
+    private LoginViewModel loginViewModel;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
                     Log.i("usuario", "XXX Email: " + usernameEditText.getText().toString() + " Senha: " + passwordEditText.getText().toString());
-                    showLoginFailed(loginResult.getError(),usernameEditText);
+                    showLoginFailed(loginResult.getError(), usernameEditText);
                 }
                 if (loginResult.getSuccess() != null) {
                     updateUiWithUser(loginResult.getSuccess(), loginResult.getSuccess().getUsuario());
@@ -126,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
     private void updateUiWithUser(LoggedInUserView model, Usuario usuario) {
 
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("usuario",usuario);
+        intent.putExtra("usuario", usuario);
 
         startActivity(intent);
     }
@@ -139,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showTelaCadastro(String email) {
         Intent intent = new Intent(this, CadastroActivity.class);
-        intent.putExtra("email",email);
+        intent.putExtra("email", email);
         startActivity(intent);
     }
 }
