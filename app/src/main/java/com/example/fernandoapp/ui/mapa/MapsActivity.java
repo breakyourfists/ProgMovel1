@@ -29,12 +29,16 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
+import com.google.maps.android.SphericalUtil;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
-        OnMapClickListener, OnMarkerClickListener {
+        OnMapClickListener,
+        OnMarkerClickListener,
+        GoogleMap.OnPolylineClickListener{
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private static final int DEFAULT_ZOOM = 15;
@@ -47,7 +51,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isSalvandoCasa;
     private TextView mTapTextView;
 
-    private Marker mCasa;
+    private Marker mCasa, pontoA, pontoB;
+    private boolean isCriandoLinha;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnPolylineClickListener(this);
 
         getLocationPermission();
 
@@ -130,6 +136,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isSalvandoCasa = true;
         if (mCasa != null)
             mCasa.remove();
+    }
+
+    public void mapaButton3Action(View view) {
+        isCriandoLinha = true;
+        Toast.makeText(this, "Clique no mapa para adicionar os pontos A e B para medição.", Toast.LENGTH_LONG).show();
+
     }
 
     private void getDeviceLocation() {
@@ -212,7 +224,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (isSalvandoCasa) {
             mCasa = mMap.addMarker(new MarkerOptions().position(point).title("Casa"));
             isSalvandoCasa = false;
-        } else
+        } else if(isCriandoLinha){
+
+            if(pontoA==null)
+                pontoA = mMap.addMarker(new MarkerOptions().position(point).title("Ponto A"));
+            else
+                pontoB = mMap.addMarker(new MarkerOptions().position(point).title("Ponto B"));
+
+            if(pontoA != null && pontoB != null){
+                Polyline linha = mMap.addPolyline(new PolylineOptions()
+                .clickable(true)
+                .add( pontoA.getPosition(),
+                        pontoB.getPosition()
+                ));
+                double dist = SphericalUtil.computeLength(linha.getPoints());
+                double dist_round = (double) Math.round(dist * 100) / 100;
+                linha.setTag(dist_round);
+
+                isCriandoLinha = false;
+                pontoA.remove();
+                pontoB.remove();
+                pontoA=null;
+                pontoB=null;
+            }
+        }else
             mTapTextView.setText("tapped, point=" + point);
     }
 
@@ -230,9 +265,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onPolylineClick(Polyline polyline) {
 
+        Toast.makeText(this, "Distância: " + polyline.getTag().toString()+" metros",
+                Toast.LENGTH_SHORT).show();
     }
 
 }

@@ -20,5 +20,6 @@
     <string name="abrirMapaButtonText">Abrir Mapa</string>
     <string name="mapaButton1">Marcar Posição Atual</string>
     <string name="mapaButton2">Salvar Casa</string>
+    <string name="mapaButton3">Criar Linha</string>
 
 </resources>
