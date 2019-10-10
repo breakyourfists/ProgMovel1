@@ -1,6 +1,7 @@
 package com.example.fernandoapp.data;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.fernandoapp.data.dao.UsuarioDAO;
 import com.example.fernandoapp.data.model.Usuario;
@@ -25,6 +26,7 @@ public class LoginDataSource {
                 return new Result.Error(new IOException("Usuário inválido."));
             }
         } catch (Exception e) {
+            Log.e("LoginDataSource","erro ao ler usuairo",e);
             return new Result.Error(new IOException("Error logging in", e));
         }
 

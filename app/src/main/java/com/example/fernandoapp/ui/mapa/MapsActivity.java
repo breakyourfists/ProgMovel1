@@ -2,6 +2,7 @@ package com.example.fernandoapp.ui.mapa;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.fernandoapp.R;
+import com.example.fernandoapp.data.model.Usuario;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -53,6 +55,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Marker mCasa, pontoA, pontoB;
     private boolean isCriandoLinha;
+    private boolean isCriandoPercurso;
+    private Usuario usuario;
+    private Location oldLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +66,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isSalvandoCasa = false;
 
         mTapTextView = (TextView) findViewById(R.id.tapText);
-
+        Intent i = getIntent();
+        usuario = i.getParcelableExtra("usuario");
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -142,6 +148,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isCriandoLinha = true;
         Toast.makeText(this, "Clique no mapa para adicionar os pontos A e B para medição.", Toast.LENGTH_LONG).show();
 
+    }
+
+    public void mapaButton4Action(View view) {
+        isCriandoLinha = true;
+        oldLocation = mLastKnownLocation;
+        Toast.makeText(this, "Iniciando Percurso.", Toast.LENGTH_LONG).show();
+        this.usuario.addLocation(oldLocation);
+        Thread thread = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while(isCriandoLinha) {
+                        getDeviceLocation();
+                        if(oldLocation != mLastKnownLocation){
+                            usuario.addLocation(mLastKnownLocation);
+                            oldLocation = mLastKnownLocation;
+                            sleep(500);
+                        }else {
+                            sleep(1000);
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        thread.start();
+
+    }
+    public void mapaButton5Action(View view) {
+        isCriandoLinha = false;
+        Toast.makeText(this, "Fim de  Percurso.", Toast.LENGTH_LONG).show();
+        //TODO
+        //Chamada para a classe DAO do banco.
     }
 
     private void getDeviceLocation() {

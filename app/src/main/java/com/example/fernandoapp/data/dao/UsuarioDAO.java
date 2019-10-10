@@ -61,11 +61,17 @@ public class UsuarioDAO {
             return id + 1;
     }
 
+    public void updatePercurso(Usuario usuario){
+        //TODO
+        //Update da classe DAO por percuso
+        db = banco.getReadableDatabase();
+    }
+
     public Usuario getUsuario(String emailP, String senhaP) {
         db = banco.getReadableDatabase();
         Usuario usuario = null;
         String[] campos = {BancoUsuario.EMAIL,
-                BancoUsuario.SENHA, BancoUsuario.DISCIPLINA, BancoUsuario.NOME, BancoUsuario.TURMA, BancoUsuario.TELEFONE, BancoUsuario.ID};
+                BancoUsuario.SENHA, BancoUsuario.DISCIPLINA, BancoUsuario.NOME, BancoUsuario.TURMA, BancoUsuario.TELEFONE, BancoUsuario.ID, BancoUsuario.PERCURSO};
         String where = BancoUsuario.EMAIL + "='" + emailP + "'";
         where += " and " + BancoUsuario.SENHA + "=" + senhaP;
 
@@ -78,8 +84,9 @@ public class UsuarioDAO {
             String disciplina = cursor.getString(cursor.getColumnIndexOrThrow(BancoUsuario.DISCIPLINA));
             String senha = cursor.getString(cursor.getColumnIndexOrThrow(BancoUsuario.SENHA));
             String email = cursor.getString(cursor.getColumnIndexOrThrow(BancoUsuario.EMAIL));
+            String percurso = cursor.getString(cursor.getColumnIndexOrThrow(BancoUsuario.PERCURSO));
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(BancoUsuario.ID));
-            usuario = new Usuario(id, nome, email, senha, disciplina, telefone, turma);
+            usuario = new Usuario(id, nome, email, senha, disciplina, telefone, turma,percurso);
         }
         db.close();
         return usuario;

@@ -21,5 +21,7 @@
     <string name="mapaButton1">Marcar Posição Atual</string>
     <string name="mapaButton2">Salvar Casa</string>
     <string name="mapaButton3">Criar Linha</string>
+    <string name="mapaButton4">Iniciar</string>
+    <string name="mapaButton5">Terminar</string>
 
 </resources>

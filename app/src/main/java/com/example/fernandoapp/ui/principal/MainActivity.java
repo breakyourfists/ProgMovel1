@@ -13,14 +13,14 @@ import com.example.fernandoapp.ui.mapa.MapsActivity;
 import com.google.android.libraries.places.api.Places;
 
 public class MainActivity extends AppCompatActivity {
-
+    private Usuario usuario;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent i = getIntent();
-        Usuario usuario = i.getParcelableExtra("usuario");
+        usuario = i.getParcelableExtra("usuario");
 
         Toast.makeText(this, "Bem vindo " + usuario.getNome(), Toast.LENGTH_SHORT).show();
 
@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void abrirMapaButton(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("usuario",usuario);
         startActivity(intent);
     }
 

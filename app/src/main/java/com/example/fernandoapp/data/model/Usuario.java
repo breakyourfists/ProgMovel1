@@ -1,7 +1,9 @@
 package com.example.fernandoapp.data.model;
 
+import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -19,7 +21,20 @@ public class Usuario implements Parcelable {
     };
     String nome, email, telefone, disciplina, senha;
     int turma, id;
-    private Percurso percurso; // Lista de localizações
+
+    public ArrayList<LatLng> getPercurso() {
+        return percurso;
+    }
+    public void addLocation(Location loc) {
+        percurso.add( new LatLng(loc.getLatitude(),loc.getLongitude()));
+    }
+
+    public void setPercurso(ArrayList<LatLng> percurso) {
+        this.percurso = percurso;
+    }
+
+    ArrayList<LatLng> percurso;
+    LatLng lat;
 
 
     public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma) {
@@ -30,7 +45,7 @@ public class Usuario implements Parcelable {
         this.disciplina = disciplina;
         this.telefone = telefone;
         this.turma = turma;
-        this.percurso = new Percurso();
+        this.percurso = new ArrayList<LatLng>();
     }
 
     private Usuario(Parcel in) {
@@ -40,11 +55,33 @@ public class Usuario implements Parcelable {
         telefone = in.readString();
         disciplina = in.readString();
         senha = in.readString();
-        percurso = in.readParcelable(Percurso.class.getClassLoader());
+        percurso = new ArrayList<LatLng>();
 
     }
 
-    public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma, Percurso percurso) {
+    public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma, String percurso) {
+        this.id = id;
+        this.nome = nome;
+        this.email = email;
+        this.senha = senha;
+        this.disciplina = disciplina;
+        this.telefone = telefone;
+        this.turma = turma;
+        this.percurso = new ArrayList<LatLng>();
+        try {
+            String[] percursoSplit = percurso.split("//|");
+
+            Double d1, d2;
+            String[] celula;
+            for (String splitado : percursoSplit) {
+                celula = splitado.split(",");
+                d1 = Double.parseDouble(celula[0]);
+                d2 = Double.parseDouble(celula[1]);
+                this.percurso.add(new LatLng(d1,d2));
+            }
+        } catch (java.lang.NumberFormatException e) {
+            Log.e("DAO","valor do percurso é >"+percurso+"<",e);
+        }
     }
 
     @Override
@@ -55,7 +92,7 @@ public class Usuario implements Parcelable {
         out.writeString(telefone);
         out.writeString(disciplina);
         out.writeString(senha);
-        out.writeString(percurso.toString());
+        out.writeParcelable(this.lat, flags);
     }
 
     @Override
