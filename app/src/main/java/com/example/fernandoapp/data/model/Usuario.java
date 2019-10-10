@@ -3,6 +3,10 @@ package com.example.fernandoapp.data.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+
 public class Usuario implements Parcelable {
     public static final Parcelable.Creator<Usuario> CREATOR = new Parcelable.Creator<Usuario>() {
         public Usuario createFromParcel(Parcel in) {
@@ -15,6 +19,8 @@ public class Usuario implements Parcelable {
     };
     String nome, email, telefone, disciplina, senha;
     int turma, id;
+    private Percurso percurso; // Lista de localizações
+
 
     public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma) {
         this.id = id;
@@ -24,6 +30,7 @@ public class Usuario implements Parcelable {
         this.disciplina = disciplina;
         this.telefone = telefone;
         this.turma = turma;
+        this.percurso = new Percurso();
     }
 
     private Usuario(Parcel in) {
@@ -33,6 +40,11 @@ public class Usuario implements Parcelable {
         telefone = in.readString();
         disciplina = in.readString();
         senha = in.readString();
+        percurso = in.readParcelable(Percurso.class.getClassLoader());
+
+    }
+
+    public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma, Percurso percurso) {
     }
 
     @Override
@@ -43,6 +55,7 @@ public class Usuario implements Parcelable {
         out.writeString(telefone);
         out.writeString(disciplina);
         out.writeString(senha);
+        out.writeString(percurso.toString());
     }
 
     @Override

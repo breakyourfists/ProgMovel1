@@ -4,6 +4,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.ArrayList;
+
 public class BancoUsuario extends SQLiteOpenHelper {
     public static final String TABELA = "usuarios";
     public static final String ID = "id";
@@ -14,7 +18,8 @@ public class BancoUsuario extends SQLiteOpenHelper {
     public static final String TURMA = "turma";
     public static final String SENHA = "senha";
     private static final String NOME_BANCO = "FernandoApp.db";
-    private static final int VERSAO = 5;
+    public static final String PERCURSO = "dadosGPS";
+    private static final int VERSAO = 9;
 
     public BancoUsuario(Context context) {
         super(context, NOME_BANCO, null, VERSAO);
@@ -30,7 +35,8 @@ public class BancoUsuario extends SQLiteOpenHelper {
                 + TELEFONE + " text, "
                 + DISCIPLINA + " text,"
                 + TURMA + " integer,"
-                + SENHA + " text "
+                + SENHA + " text ,"
+                + PERCURSO + " text "
                 + ")";
         db.execSQL(sql);
     }
