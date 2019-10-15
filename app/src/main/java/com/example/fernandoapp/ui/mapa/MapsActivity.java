@@ -37,10 +37,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.SphericalUtil;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
         OnMapClickListener,
         OnMarkerClickListener,
-        GoogleMap.OnPolylineClickListener{
+        GoogleMap.OnPolylineClickListener {
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     private static final int DEFAULT_ZOOM = 15;
@@ -58,6 +60,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private boolean isCriandoPercurso;
     private Usuario usuario;
     private Location oldLocation;
+    private Polyline percursoLinha;
+    LatLng lat;
+    List<LatLng> points;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,36 +156,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     public void mapaButton4Action(View view) {
-        isCriandoLinha = true;
+        isCriandoPercurso = true;
+
         oldLocation = mLastKnownLocation;
+        percursoLinha = mMap.addPolyline(new PolylineOptions()
+                .clickable(true)
+                .add(new LatLng(oldLocation.getLatitude(), oldLocation.getLongitude())));
         Toast.makeText(this, "Iniciando Percurso.", Toast.LENGTH_LONG).show();
-        this.usuario.addLocation(oldLocation);
-        Thread thread = new Thread() {
-            @Override
+
+        new Thread() {
             public void run() {
-                try {
-                    while(isCriandoLinha) {
-                        getDeviceLocation();
-                        if(oldLocation != mLastKnownLocation){
-                            usuario.addLocation(mLastKnownLocation);
-                            oldLocation = mLastKnownLocation;
-                            sleep(500);
-                        }else {
-                            sleep(1000);
-                        }
+                while (isCriandoPercurso) {
+                    try {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                getDeviceLocation();
+                                if (oldLocation.getLatitude() != mLastKnownLocation.getLatitude() || oldLocation.getLongitude() != mLastKnownLocation.getLongitude()) {
+                                    List<LatLng> points = percursoLinha.getPoints();
+                                    lat = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                                    points.add(lat);
+                                    percursoLinha.setPoints(points);
+                                    oldLocation = mLastKnownLocation;
+                                }
+                            }
+                        });
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
-        };
-
-        thread.start();
+        }.start();
 
     }
+
     public void mapaButton5Action(View view) {
-        isCriandoLinha = false;
+        isCriandoPercurso = false;
         Toast.makeText(this, "Fim de  Percurso.", Toast.LENGTH_LONG).show();
+        usuario.setPercurso(percursoLinha.getPoints());
         //TODO
         //Chamada para a classe DAO do banco.
     }
@@ -265,19 +280,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (isSalvandoCasa) {
             mCasa = mMap.addMarker(new MarkerOptions().position(point).title("Casa"));
             isSalvandoCasa = false;
-        } else if(isCriandoLinha){
+        } else if (isCriandoLinha) {
 
-            if(pontoA==null)
+            if (pontoA == null)
                 pontoA = mMap.addMarker(new MarkerOptions().position(point).title("Ponto A"));
             else
                 pontoB = mMap.addMarker(new MarkerOptions().position(point).title("Ponto B"));
 
-            if(pontoA != null && pontoB != null){
+            if (pontoA != null && pontoB != null) {
                 Polyline linha = mMap.addPolyline(new PolylineOptions()
-                .clickable(true)
-                .add( pontoA.getPosition(),
-                        pontoB.getPosition()
-                ));
+                        .clickable(true)
+                        .add(pontoA.getPosition(),
+                                pontoB.getPosition()
+                        ));
                 double dist = SphericalUtil.computeLength(linha.getPoints());
                 double dist_round = (double) Math.round(dist * 100) / 100;
                 linha.setTag(dist_round);
@@ -285,10 +300,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 isCriandoLinha = false;
                 pontoA.remove();
                 pontoB.remove();
-                pontoA=null;
-                pontoB=null;
+                pontoA = null;
+                pontoB = null;
             }
-        }else
+        } else
             mTapTextView.setText("tapped, point=" + point);
     }
 
@@ -308,7 +323,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onPolylineClick(Polyline polyline) {
 
-        Toast.makeText(this, "Distância: " + polyline.getTag().toString()+" metros",
+        Toast.makeText(this, "Distância: " + polyline.getTag().toString() + " metros",
                 Toast.LENGTH_SHORT).show();
     }
 
