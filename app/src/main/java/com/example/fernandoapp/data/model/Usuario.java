@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Usuario implements Parcelable {
     public static final Parcelable.Creator<Usuario> CREATOR = new Parcelable.Creator<Usuario>() {
@@ -20,20 +21,39 @@ public class Usuario implements Parcelable {
         }
     };
     String nome, email, telefone, disciplina, senha;
-    int turma, id;
+    int turma;
 
-    public ArrayList<LatLng> getPercurso() {
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    int id;
+
+    public List<LatLng> getPercurso() {
         return percurso;
+    }
+    public String getPercursoString() {
+        String percursoString ="";
+        for(LatLng lt : getPercurso()){
+            percursoString += lt.toString()+"|";
+        }
+        percursoString = percursoString.replaceAll("lat/lng:","");
+        percursoString = percursoString.replaceAll("[()]","");
+        return percursoString;
     }
     public void addLocation(Location loc) {
         percurso.add( new LatLng(loc.getLatitude(),loc.getLongitude()));
     }
 
-    public void setPercurso(ArrayList<LatLng> percurso) {
+    public void setPercurso(List<LatLng> percurso) {
         this.percurso = percurso;
     }
 
-    ArrayList<LatLng> percurso;
+    List<LatLng> percurso;
     LatLng lat;
 
 
@@ -48,16 +68,7 @@ public class Usuario implements Parcelable {
         this.percurso = new ArrayList<LatLng>();
     }
 
-    private Usuario(Parcel in) {
-        turma = in.readInt();
-        nome = in.readString();
-        email = in.readString();
-        telefone = in.readString();
-        disciplina = in.readString();
-        senha = in.readString();
-        percurso = new ArrayList<LatLng>();
 
-    }
 
     public Usuario(int id, String nome, String email, String senha, String disciplina, String telefone, int turma, String percurso) {
         this.id = id;
@@ -69,7 +80,7 @@ public class Usuario implements Parcelable {
         this.turma = turma;
         this.percurso = new ArrayList<LatLng>();
         try {
-            String[] percursoSplit = percurso.split("//|");
+            String[] percursoSplit = percurso.split("[|]");
 
             Double d1, d2;
             String[] celula;
@@ -82,17 +93,32 @@ public class Usuario implements Parcelable {
         } catch (java.lang.NumberFormatException e) {
             Log.e("DAO","valor do percurso é >"+percurso+"<",e);
         }
+        Log.i("usr","no usuario"+getPercursoString());
+    }
+    private Usuario(Parcel in) {
+        percurso = new ArrayList<LatLng>();
+        id = in.readInt();
+        turma = in.readInt();
+        nome = in.readString();
+        email = in.readString();
+        telefone = in.readString();
+        disciplina = in.readString();
+        senha = in.readString();
+        percurso = in.readArrayList(LatLng.class.getClassLoader());
+
     }
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeInt(id);
         out.writeInt(turma);
         out.writeString(nome);
         out.writeString(email);
         out.writeString(telefone);
         out.writeString(disciplina);
         out.writeString(senha);
-        out.writeParcelable(this.lat, flags);
+        out.writeList(percurso);
+        //out.writeParcelable(this.lat, flags);
     }
 
     @Override

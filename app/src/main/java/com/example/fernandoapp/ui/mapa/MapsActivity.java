@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import com.example.fernandoapp.R;
+import com.example.fernandoapp.data.dao.UsuarioDAO;
 import com.example.fernandoapp.data.model.Usuario;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -73,6 +74,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mTapTextView = (TextView) findViewById(R.id.tapText);
         Intent i = getIntent();
         usuario = i.getParcelableExtra("usuario");
+        Log.i("usr","no Mapa id é "+usuario.getId());
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -157,7 +159,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public void mapaButton4Action(View view) {
         isCriandoPercurso = true;
-
+        getDeviceLocation();
         oldLocation = mLastKnownLocation;
         percursoLinha = mMap.addPolyline(new PolylineOptions()
                 .clickable(true)
@@ -196,8 +198,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         isCriandoPercurso = false;
         Toast.makeText(this, "Fim de  Percurso.", Toast.LENGTH_LONG).show();
         usuario.setPercurso(percursoLinha.getPoints());
-        //TODO
-        //Chamada para a classe DAO do banco.
+        UsuarioDAO usuarioDAO = new UsuarioDAO(getApplicationContext());
+        usuarioDAO.updateUsuario(usuario);
+        usuarioDAO.getPercurso(usuario);
     }
 
     private void getDeviceLocation() {

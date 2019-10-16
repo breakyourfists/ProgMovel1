@@ -2,6 +2,7 @@ package com.example.fernandoapp.ui.principal;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent i = getIntent();
         usuario = i.getParcelableExtra("usuario");
-
+        Log.i("usr","no main id é "+usuario.getId());
         Toast.makeText(this, "Bem vindo " + usuario.getNome(), Toast.LENGTH_SHORT).show();
 
         String apiKey = getString(R.string.google_maps_key);

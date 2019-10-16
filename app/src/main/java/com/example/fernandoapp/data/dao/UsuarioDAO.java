@@ -5,9 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.fernandoapp.data.BancoUsuario;
 import com.example.fernandoapp.data.model.Usuario;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class UsuarioDAO {
     private SQLiteDatabase db;
@@ -61,10 +66,52 @@ public class UsuarioDAO {
             return id + 1;
     }
 
-    public void updatePercurso(Usuario usuario){
+    public void updateUsuario(Usuario usuario){
         //TODO
         //Update da classe DAO por percuso
+
+        db = banco.getWritableDatabase();
+
+        ContentValues values = toValues(usuario);
+        db.update(BancoUsuario.TABELA, values, "id=?", toArgs(usuario));
+        db.close();
+    }
+
+    private String[] toArgs(Usuario usuario) {
+        String[] args = {String.valueOf(usuario.getId())};
+        return args;
+    }
+
+    private ContentValues toValues(Usuario usuario) {
+        ContentValues values = new ContentValues();
+        values.put("disciplina", usuario.getDisciplina());
+        values.put("turma", usuario.getTurma());
+        values.put("senha", usuario.getSenha());
+        values.put("email", usuario.getEmail());
+        values.put("telefone", usuario.getTelefone());
+        values.put("nome", usuario.getNome());
+        values.put("dadosGPS", usuario.getPercursoString());
+        return values;
+    }
+
+    public ArrayList<LatLng> getPercurso(Usuario usuario){
+        ArrayList<LatLng> percurso = new ArrayList<>();
         db = banco.getReadableDatabase();
+        String selectQuery = "SELECT "+BancoUsuario.PERCURSO+", NOME FROM "+BancoUsuario.TABELA+" WHERE "+BancoUsuario.ID+"=" + usuario.getId();
+        Log.i("usr",selectQuery);
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if(cursor.moveToFirst()){
+            String percursoStirng = cursor.getString(0);
+            Log.i("usr","no banco"+percursoStirng);
+             percursoStirng = cursor.getString(1);
+            Log.i("usr",percursoStirng);
+        }
+        cursor.close();
+        db.close();
+
+
+        return percurso;
     }
 
     public Usuario getUsuario(String emailP, String senhaP) {
@@ -86,7 +133,8 @@ public class UsuarioDAO {
             String email = cursor.getString(cursor.getColumnIndexOrThrow(BancoUsuario.EMAIL));
             String percurso = cursor.getString(cursor.getColumnIndexOrThrow(BancoUsuario.PERCURSO));
             int id = cursor.getInt(cursor.getColumnIndexOrThrow(BancoUsuario.ID));
-            usuario = new Usuario(id, nome, email, senha, disciplina, telefone, turma,percurso);
+            Log.i("usr","id é "+id);
+            usuario = new Usuario(id, nome, email, senha, disciplina, telefone, turma, percurso);
         }
         db.close();
         return usuario;
