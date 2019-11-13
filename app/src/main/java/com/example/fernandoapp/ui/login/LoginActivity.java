@@ -3,6 +3,7 @@ package com.example.fernandoapp.ui.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -113,6 +114,8 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override

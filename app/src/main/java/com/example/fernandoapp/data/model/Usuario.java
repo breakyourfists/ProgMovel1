@@ -23,6 +23,13 @@ public class Usuario implements Parcelable {
     String nome, email, telefone, disciplina, senha;
     int turma;
 
+    public Usuario(int id, String email, String senha) {
+        this.id = id;
+        this.email = email;
+        this.senha = senha;
+        nome=email;
+    }
+
     public int getId() {
         return id;
     }
