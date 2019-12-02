@@ -12,6 +12,7 @@ import com.example.fernandoapp.data.BancoUsuario;
 import com.example.fernandoapp.data.model.Usuario;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -29,6 +30,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class UsuarioDAO extends AsyncTask<String, String, String> {
     private SQLiteDatabase db;
     private BancoUsuario banco;
+    private ArrayList<Usuario> usuarios;
     private final String API_URL = "https://bunmiw2kwb.execute-api.us-east-2.amazonaws.com/Teste2/";
 
 
@@ -74,7 +76,7 @@ public class UsuarioDAO extends AsyncTask<String, String, String> {
                     String line = null;
                     try {
                         while ((line = reader.readLine()) != null) {
-                            sb.append(line + "\n");
+                            sb.append(line + " - \n");
                         }
                         Log.e("UsuarioDAO", "resposta: " + sb.toString());
                     } catch (IOException e) {
@@ -93,8 +95,70 @@ public class UsuarioDAO extends AsyncTask<String, String, String> {
                 Log.e("UsuarioDAO", "Erro interno no post da API. Erro: ", e);
             }
             return "Sucesso";
+        } else if (params[0] == "listarUsuarios") {
+            try {
+                usuarios = new ArrayList<Usuario>();
+                URL url = new URL(API_URL + "?funcao=listarUsuarios");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setRequestMethod("GET"); // here you are telling that it is a POST request, which can be changed into "PUT", "GET", "DELETE" etc.
+                httpURLConnection.connect();
+                Log.e("UsuarioDAO", "response code: " + httpURLConnection.getResponseCode());
+
+                if (httpURLConnection.getResponseCode() == 200) {
+                    InputStream response = httpURLConnection.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(response));
+                    StringBuilder sb = new StringBuilder();
+                    String line = null;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line + "\n");
+                    }
+                    JSONArray usuariosJson = new JSONArray(sb.toString());
+                    for (int i = 0; i < usuariosJson.length(); i++) {
+                        usuarios.add(new Usuario(usuariosJson.getJSONObject(i)));
+                    }
+                    Log.e("UsuarioDAO", "resposta: " + sb.toString());
+                }
+            } catch (Exception e) {
+                Log.e("UsuarioDAO", "Erro interno no listarUsuarios. Erro: ", e);
+            }
+        } else if (params[0] == "inserirSeguida") {
+            try {
+                URL url = new URL(API_URL + "?funcao=inserirSeguida");
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setRequestMethod("POST"); // here you are telling that it is a POST request, which can be changed into "PUT", "GET", "DELETE" etc.
+                httpURLConnection.setRequestProperty("Content-Type", "application/json"); // here you are setting the `Content-Type` for the data you are sending which is `application/json`
+                httpURLConnection.setRequestProperty("User-Agent", "Mozilla/5.0 ( compatible ) ");
+                httpURLConnection.setRequestProperty("Accept", "application/json, text/plain, */*");
+                httpURLConnection.connect();
+
+
+                JSONObject seguida = new JSONObject();
+                seguida.put("usuario_id", params[1]);
+                seguida.put("seguir_id", params[2]);
+
+                JSONObject main = new JSONObject();
+                main.put("seguida", seguida);
+
+
+                DataOutputStream wr = new DataOutputStream(httpURLConnection.getOutputStream());
+                wr.writeBytes(main.toString());
+                wr.flush();
+                wr.close();
+
+                int status = httpURLConnection.getResponseCode();
+
+            } catch (Exception e) {
+                Log.e("UsuarioDAO", "Erro interno no post da API. Erro: ", e);
+            }
         }
         return null;
+    }
+
+    public ArrayList<Usuario> getUsuarios() {
+        String[] valores = {"listarUsuarios"};
+        doInBackground(valores);
+        return usuarios;
     }
 
     public Usuario inserirUsuario(String nome, String email, String senha) {
@@ -197,12 +261,12 @@ public class UsuarioDAO extends AsyncTask<String, String, String> {
 
     public Usuario getUsuario(String emailP, String senhaP) {
         Usuario usuario = null;
-        String id_usuario="";
-        String urlGetUsuario = API_URL+"?funcao=login&email="+emailP+"&senha="+senhaP;
-        Log.e("LoginActivity", "url "+urlGetUsuario );
+        String id_usuario = "";
+        String urlGetUsuario = API_URL + "?funcao=login&email=" + emailP + "&senha=" + senhaP;
+        Log.e("LoginActivity", "url " + urlGetUsuario);
 
-        try{
-        URL getUser = new URL(urlGetUsuario);
+        try {
+            URL getUser = new URL(urlGetUsuario);
             URLConnection conn = getUser.openConnection();
             HttpsURLConnection myConnection = (HttpsURLConnection) getUser.openConnection();
             if (myConnection.getResponseCode() == 200) {
@@ -237,11 +301,11 @@ public class UsuarioDAO extends AsyncTask<String, String, String> {
                 } catch (EOFException e) {
                     Log.w("LoginActivity", "erro na leitura da resposta JSON.",e);
                 }*/
-            }else{
-                Log.e("LoginActivity","myConnection.getResponseCode() = "+myConnection.getResponseCode());
+            } else {
+                Log.e("LoginActivity", "myConnection.getResponseCode() = " + myConnection.getResponseCode());
             }
-        }catch (Exception e){
-            Log.e("LoginActivity","UsuarioDAO.getUsuario()",e);
+        } catch (Exception e) {
+            Log.e("LoginActivity", "UsuarioDAO.getUsuario()", e);
         }
         /*db = banco.getReadableDatabase();
 
@@ -265,10 +329,16 @@ public class UsuarioDAO extends AsyncTask<String, String, String> {
             usuario = new Usuario(id, nome, email, senha, disciplina, telefone, turma, percurso);
         }
         db.close();*/
-        if(!"".equals(id_usuario))
+        if (!"".equals(id_usuario))
             usuario = new Usuario(Integer.parseInt(id_usuario), emailP, senhaP);
         Log.e("LoginActivity", "nome: " + usuario.getNome());
 
         return usuario;
+    }
+
+    public String inserirSeguida(int usuario_id, int seguir_id) {
+        String[] valores = {"inserirSeguida", String.valueOf(usuario_id), String.valueOf(seguir_id)};
+        doInBackground(valores);
+        return null;
     }
 }

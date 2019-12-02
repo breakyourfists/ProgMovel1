@@ -5,8 +5,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +35,14 @@ public class Usuario implements Parcelable {
         this.senha = senha;
         nome=email;
     }
+
+    public Usuario(JSONObject piadoJson) throws JSONException, ParseException {
+        this.id = piadoJson.getInt("id");
+        this.nome = piadoJson.getString("nome");
+        this.email = piadoJson.getString("email");
+        this.senha = piadoJson.getString("senha");
+    }
+
 
     public Usuario(String nome, String email, String senha) {
         this.email = email;
@@ -189,6 +203,12 @@ public class Usuario implements Parcelable {
 
     public void setTurma(String turma) {
         this.turma = Integer.parseInt(turma);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return nome;
     }
 
     public String toJsonPut() {

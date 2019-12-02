@@ -53,6 +53,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void abrirTelaSeguirUsuarioButton(View view) {
+        Intent intent = new Intent(this, Seguir.class);
+        intent.putExtra("usuario", usuario);
+        startActivity(intent);
+    }
+
+
     private void setLaunchActivityClickListener(
             int onClickResId, Class<? extends AppCompatActivity> activityClassToLaunch) {
         findViewById(onClickResId)
