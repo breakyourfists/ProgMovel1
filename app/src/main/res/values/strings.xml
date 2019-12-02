@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FernandoApp</string>
+    <string name="app_name">Piados</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Senha</string>
@@ -23,5 +23,6 @@
     <string name="mapaButton3">Criar Linha</string>
     <string name="mapaButton4">Iniciar</string>
     <string name="mapaButton5">Terminar</string>
-
+    <string name="feedButton">Abrir Feed</string>
+    <string name="title_activity_cadastrar_piado">CadastrarPiado</string>
 </resources>

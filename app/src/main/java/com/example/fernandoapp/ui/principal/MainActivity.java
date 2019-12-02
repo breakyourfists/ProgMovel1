@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fernandoapp.R;
 import com.example.fernandoapp.data.model.Usuario;
+import com.example.fernandoapp.ui.cadastro.CadastroPiado;
+import com.example.fernandoapp.ui.feed.FeedActivity;
 import com.example.fernandoapp.ui.mapa.MapsActivity;
 import com.google.android.libraries.places.api.Places;
 
@@ -31,12 +33,23 @@ public class MainActivity extends AppCompatActivity {
             Places.initialize(getApplicationContext(), apiKey);
         }
 
-
     }
 
     public void abrirMapaButton(View view) {
         Intent intent = new Intent(this, MapsActivity.class);
         intent.putExtra("usuario",usuario);
+        startActivity(intent);
+    }
+
+    public void abrirFeedButton(View view) {
+        Intent intent = new Intent(this, FeedActivity.class);
+        intent.putExtra("usuario", usuario);
+        startActivity(intent);
+    }
+
+    public void cadastrarPiadoButton(View view) {
+        Intent intent = new Intent(this, CadastroPiado.class);
+        intent.putExtra("usuario", usuario);
         startActivity(intent);
     }
 

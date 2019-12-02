@@ -54,6 +54,14 @@ public class CadastroActivity extends AppCompatActivity {
         turmaCampoEditText = findViewById(R.id.turmaCampo);
         imageView = findViewById(R.id.imageView);
 
+//        //
+//        campoNomeEditText.setText("Fernando");
+//        disciplinaCampoEditText.setText("2121");
+//        telefoneCampoEditText.setText("323232");
+//        turmaCampoEditText.setText("232323");
+//        campoSenhaEditText.setText("123456");
+//        //
+
         campos = new ArrayList<>();
         campos.add(campoNomeEditText);
         campos.add(campoEmailEditText);
@@ -176,7 +184,8 @@ public class CadastroActivity extends AppCompatActivity {
         int turmaInt = Integer.parseInt(turmaCampoEditText.getText().toString());
         UsuarioDAO usuarioDAO = new UsuarioDAO(getApplicationContext());
         try {
-            usuarioDAO.inserirUsuario(nomeStr, emailStr, telefoneStr, turmaInt, senhaStr, disciplinaStr);
+            //usuarioDAO.inserirUsuario(nomeStr, emailStr, telefoneStr, turmaInt, senhaStr, disciplinaStr);
+            usuarioDAO.inserirUsuario(nomeStr, emailStr, senhaStr);
             Toast.makeText(getApplicationContext(), "Usuário cadastrado com sucesso.", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);

@@ -30,6 +30,12 @@ public class Usuario implements Parcelable {
         nome=email;
     }
 
+    public Usuario(String nome, String email, String senha) {
+        this.email = email;
+        this.senha = senha;
+        this.nome = nome;
+    }
+
     public int getId() {
         return id;
     }
@@ -183,5 +189,9 @@ public class Usuario implements Parcelable {
 
     public void setTurma(String turma) {
         this.turma = Integer.parseInt(turma);
+    }
+
+    public String toJsonPut() {
+        return String.format("{'nome' : '%s', 'email' : '%s', 'senha' : '%s'}", nome, email, senha);
     }
 }

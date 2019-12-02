@@ -41,6 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         loginViewModel.setContext(getApplicationContext());
 
         final EditText usernameEditText = findViewById(R.id.username);
+        usernameEditText.setText("fernando@email.com");
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
